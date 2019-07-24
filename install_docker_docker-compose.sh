@@ -30,8 +30,8 @@ echo -e "Installation de Docker"
 echo -e ""
 
 echo -e "$COLCMD"
-apt-get update
-apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
+#apt-get update && apt-install -y curl
+apt-get install -y apt-transport-https ca-certificates gnupg2 software-properties-common
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 

@@ -193,7 +193,7 @@ echo "***************************************************"
 
 # Téléchargement du fichier contenant les identifiants d'accès
 
-curl -fsSL https://raw.githubusercontent.com/siollb/e-comBox_scriptsLinux/master/install_docker_docker-compose.sh -o install_docker_docker-compose.sh
+wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
 
 echo -e "$COLINFO"
 echo "L'application e-comBox est maintenant accessible à l'URL suivante :"

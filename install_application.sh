@@ -191,10 +191,17 @@ echo "***************************************************"
 echo "*        FIN DE L'INSTALLATION DE E-COMBOX        *"
 echo "***************************************************"
 
+# Téléchargement du fichier contenant les identifiants d'accès
+
+curl -fsSL https://raw.githubusercontent.com/siollb/e-comBox_scriptsLinux/master/install_docker_docker-compose.sh -o install_docker_docker-compose.sh
+
 echo -e "$COLINFO"
 echo "L'application e-comBox est maintenant accessible à l'URL suivante :"
 echo -e "http://$URL_UTILE:8888"
+echo -e ""
+echo -e "Les identifiants d'accès figurent dans le fichier /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf"
 echo -e "$COLCMD"
+
 
 #echo -e "$COLSAISIE"
 #echo "Tapez sur Entrée pour terminer l'installation"

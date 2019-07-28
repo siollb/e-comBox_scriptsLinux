@@ -162,9 +162,9 @@ echo "Lancement et configuration de l'environnement de l'application e-comBox"
 echo -e "$COLCMD\c"
 
 if docker ps -a | grep e-combox; then
-	docker rm -f e-combox
+	docker rm -fv e-combox
 fi
-
+docker pull aporaf/e-combox:1.0
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0
 
 # Mise à jour de l'accès à l'API

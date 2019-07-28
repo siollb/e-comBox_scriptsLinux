@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installation de Portainer
-# Les fichiers incluant le docker-compose seront téléchargés dans /opt
+# Les fichiers incluant le docker-compose seront téléchargés dans /opt/e-comBox
 
 # Couleurs
 COLTITRE="\033[1;35m"   # Rose
@@ -93,20 +93,24 @@ echo -e "$COLPARTIE"
 echo -e "Récupération et configuration de Portainer"
 echo -e "$COLCMD"
 
-if [ -d "/opt/e-comBox_portainer" ]; then
+if [ ! -d "/opt/e-comBox" ]; then
+	mkdir /opt/e-comBox
+fi
+
+if [ -d "/opt/e-comBox/e-comBox_portainer" ]; then
 	echo -e "$COLDEFAUT"
 	echo "Portainer existe et va être remplacé"
 	echo -e "$COLCMD\c"
-        cd /opt/e-comBox_portainer
+        cd /opt/e-comBox/e-comBox_portainer
 	docker-compose down
-	rm -rf /opt/e-comBox_portainer
+	rm -rf /opt/e-comBox/e-comBox_portainer
 fi
-cd /opt
+cd /opt/e-comBox
 git clone https://github.com/siollb/e-comBox_portainer.git
 
 #Configuration de l'adresse IP
 echo -e "$COLDEFAUT"
-echo "Mise à jour de /opt/e-comBox_portainer/.env"
+echo "Mise à jour de /opt/e-comBox/e-comBox_portainer/.env"
 echo -e "$COLCMD"
 
 if [ "$ADRESSE_IP_PUBLIQUE" != "" ] ; then
@@ -115,7 +119,7 @@ if [ "$ADRESSE_IP_PUBLIQUE" != "" ] ; then
 fi
 
 echo -e "$COLCMD\c"
-echo "URL_UTILE=$URL_UTILE" >> /opt/e-comBox_portainer/.env
+echo "URL_UTILE=$URL_UTILE" >> /opt/e-comBox/e-comBox_portainer/.env
 echo ""
 
 #Configuration éventuelle du proxy en ajoutant la variable d'environnement
@@ -144,7 +148,7 @@ fi
 echo -e "$COLDEFAUT"
 echo "Lancement de portainer"
 echo -e "$COLCMD\c"
-cd /opt/e-comBox_portainer/
+cd /opt/e-comBox/e-comBox_portainer/
 docker-compose up -d
 
 echo -e "$COLINFO"
@@ -167,18 +171,6 @@ fi
 docker pull aporaf/e-combox:1.0
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0
 
-# Mise à jour de l'accès à l'API
-
-#echo -e "$COLINFO"
-#echo -e "Lapplication e-comBox sera accessible par défaut via l'URL $URL_UTILE"
-#echo -e "Veuillez confirmer cette adresse URL : $COLSAISIE\c"
-#echo "Appuyer sur Entrée si vous confirmez ou saisissez la nouvelle adresse IP ou le nouveau nom de domaine"
-#read NEW_URL
-#echo "$COLCMD"
-
-#if [ "$NEW_URL" != "" ]; then
-#	URL_UTILE=$NEW_URL
-#fi
 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map
 do
@@ -203,10 +195,6 @@ echo -e "Les identifiants d'accès figurent dans le fichier /opt/e-comBox/e-comB
 echo -e "$COLCMD"
 
 
-#echo -e "$COLSAISIE"
-#echo "Tapez sur Entrée pour terminer l'installation"
-#echo -e "$COLCMD\c"
-#read FIN
 
 
 

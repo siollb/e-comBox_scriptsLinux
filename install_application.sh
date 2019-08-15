@@ -1,4 +1,5 @@
 #!/bin/bash
+me/apollonie/lycee/appli_ecombox/e-comBox_scriptsLinux/install_application.sh' 
 
 # Installation de Portainer
 # Les fichiers incluant le docker-compose seront téléchargés dans /opt/e-comBox
@@ -119,7 +120,7 @@ if [ "$ADRESSE_IP_PUBLIQUE" != "" ] ; then
 fi
 
 echo -e "$COLCMD\c"
-echo "URL_UTILE=$URL_UTILE" >> /opt/e-comBox/e-comBox_portainer/.env
+echo "URL_UTILE=$URL_UTILE" > /opt/e-comBox/e-comBox_portainer/.env
 echo ""
 
 #Configuration éventuelle du proxy en ajoutant la variable d'environnement
@@ -166,7 +167,8 @@ echo "Lancement et configuration de l'environnement de l'application e-comBox"
 echo -e "$COLCMD\c"
 
 if docker ps -a | grep e-combox; then
-	docker rm -fv e-combox
+	docker rm -f e-combox
+	docker volume rm $(docker volume ls -qf dangling=true)
 fi
 docker pull aporaf/e-combox:1.0
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0

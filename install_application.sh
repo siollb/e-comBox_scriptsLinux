@@ -1,5 +1,4 @@
 #!/bin/bash
-me/apollonie/lycee/appli_ecombox/e-comBox_scriptsLinux/install_application.sh' 
 
 # Installation de Portainer
 # Les fichiers incluant le docker-compose seront téléchargés dans /opt/e-comBox
@@ -19,8 +18,8 @@ COLINFO="\033[0;36m"    # Cyan
 ERREUR()
 {
         echo -e "$COLERREUR"
-        echo "ERREUR! e-comBox n'est pas correctement configuré ou n'a finalement pas été reconfiguré"
-        echo -e "$1"
+        echo -e "ERREUR! Vous avez décidé de ne pas configurer e-comBox. Vous pouvez reprendre la procédure quand vous voulez"
+	echo -e "$1"
         echo -e "$COLTXT"
         exit 1
 }
@@ -53,7 +52,7 @@ echo "***************************************************"
 
 echo -e "$COLPARTIE"
 echo ""
-echo "Configuration de l'adresse IP"
+echo -e "Configuration de l'adresse IP"
 echo ""
 
 #Gestion des adresses IP
@@ -76,7 +75,7 @@ read ADRESSE_PROXY
 
 echo -e "$COLTXT"
 echo -e "Saisissez les hôtes à ignorer par le proxy : $COLSAISIE\n"
-echo "Laisser vide et validez si pas de proxy sinon saisir les hôtes à ignorer séparés par une virgule (dans ce cas \"localhost\" doit obligatoirement en faire partie et les caractères spéciaux comme \".\" ou \"*\" sont acceptés)"
+echo "Laisser vide et validez si pas de proxy sinon saisir les hôtes à ignorer séparés par une virgule \(dans ce cas \"localhost\" doit obligatoirement en faire partie et les caractères spéciaux comme \".\" ou \"*\" sont acceptés\)"
 read NO_PROXY
 
 echo -e "$COLINFO"
@@ -174,6 +173,9 @@ docker pull aporaf/e-combox:1.0
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0
 
 # Nettoyage
+echo -e "$COLDEFAUT"
+echo "Suppression des anciennes images de e-comBox"
+echo -e "$COLCMD\c"
 docker rmi $(docker images -q -f dangling=true)
 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map

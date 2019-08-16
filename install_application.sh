@@ -33,7 +33,7 @@ POURSUIVRE()
         while [ "$REPONSE" != "o" -a "$REPONSE" != "O" -a "$REPONSE" != "n" ]
         do
           echo -e "$COLTXT"
-          echo -e "Peut-on poursuivre? (${COLCHOIX}o/n${COLTXT}) $COLSAISIE\c"
+	  echo -e "Peut-on poursuivre (o par défaut) ? (${COLCHOIX}o/n${COLTXT}) $COLSAISIE\c"
 	  read REPONSE
           if [ -z "$REPONSE" ]; then
 	     REPONSE="o"
@@ -63,20 +63,20 @@ read ADRESSE_IP_PRIVE
 
 echo -e "$COLTXT"
 echo -e " Si le serveur doit être accessible de l'extérieur, saisissez l'adresse IP publique ou un nom de domaine pleinement qualifié. C'est cette adresse IP ou ce nom de domaine qui apparaîtra au niveau de chaque site créé : $COLSAISIE\n"
-echo -e "Laisser vide si le serveur ne sera pas accessible de l'extérieur. L'application e-comBox utilisera l'adresse IP privée." 
+echo -e "Laisser vide et validez si le serveur ne sera pas accessible de l'extérieur. L'application e-comBox utilisera l'adresse IP privée." 
 read ADRESSE_IP_PUBLIQUE
 
 
 #Gestion du proxy
 echo -e "$COLTXT"
 echo -e "Saisissez l'adresse du proxy : $COLSAISIE\n"
-echo "Laisser vide si pas de proxy sinon saisir ip-proxy:port"
+echo "Laisser vide et validez si pas de proxy sinon saisir ip-proxy:port"
 read ADRESSE_PROXY
 
 
 echo -e "$COLTXT"
 echo -e "Saisissez les hôtes à ignorer par le proxy : $COLSAISIE\n"
-echo "Laisser vide si pas de proxy sinon saisir les hôtes à ignorer séparés par une virgule (dans ce cas \"localhost\" doit obligatoirement en faire partie et les caractères spéciaux comme \".\" ou \"*\" sont acceptés)"
+echo "Laisser vide et validez si pas de proxy sinon saisir les hôtes à ignorer séparés par une virgule (dans ce cas \"localhost\" doit obligatoirement en faire partie et les caractères spéciaux comme \".\" ou \"*\" sont acceptés)"
 read NO_PROXY
 
 echo -e "$COLINFO"
@@ -173,6 +173,8 @@ fi
 docker pull aporaf/e-combox:1.0
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0
 
+# Nettoyage
+docker rmi $(docker images -q -f dangling=true)
 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map
 do

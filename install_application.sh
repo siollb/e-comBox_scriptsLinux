@@ -176,7 +176,9 @@ docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --res
 echo -e "$COLDEFAUT"
 echo "Suppression des anciennes images de e-comBox"
 echo -e "$COLCMD\c"
-docker rmi $(docker images -q -f dangling=true)
+if docker images -q -f dangling=true; then
+ docker rmi $(docker images -q -f dangling=true) >> /dev/null
+fi
 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map
 do
@@ -185,9 +187,8 @@ done
 
 # Création du réseau des sites
 echo -e "$COLDEFAUT"
-echo "Suppression des réseaux non utilisés et création du réseau des sites"
+echo "Création du réseau des sites"
 echo -e "$COLCMD\c"
-docker network prune -f
 if (! docker network ls | grep bridge_e-combox); then
 docker network create bridge_e-combox
 fi
@@ -195,6 +196,10 @@ echo -e "$COLTITRE"
 echo "***************************************************"
 echo "*        FIN DE L'INSTALLATION DE E-COMBOX        *"
 echo "***************************************************"
+
+echo -e "$COLDEFAUT"
+echo "Téléchargement du fichier contenant les identifiants d'accès"
+echo -e "$COLCMD\c"
 
 # Téléchargement du fichier contenant les identifiants d'accès
 

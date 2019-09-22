@@ -88,6 +88,19 @@ echo -e "$COLCMD"
 
 POURSUIVRE
 
+if [ "$ADRESSE_PROXY" != "" ]; then
+   echo -e "$COLDEFAUT"
+   echo "Congiguration de GIT pour le proxy"
+   echo -e "$COLCMD\c"
+   git config --global http.proxy http://$ADRESSE_PROXY
+   else
+        echo -e "$COLINFO"
+        echo "Aucun proxy configuré sur le système"
+        echo -e "$COLCMD"
+        git config --global --unset http.proxy
+fi
+
+
 #Récupération de portainer
 echo -e "$COLPARTIE"
 echo -e "Récupération et configuration de Portainer"
@@ -131,9 +144,9 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    echo "Ajout des variables d'environnement à systemd (/etc/systemd/system/docker.service.d/http-proxy.conf)"
    echo -e "$COLCMD\c"
    echo "[Service]" > /etc/systemd/system/docker.service.d/http-proxy.conf
-   echo "Environment=\"HTTP_PROXY=http://$ADRESSE_PROXY" > /etc/systemd/system/docker.service.d/http-proxy.conf
-   echo "Environment=\"HTTPS_PROXY=http://$ADRESSE_PROXY" > /etc/systemd/system/docker.service.d/http-proxy.conf
-   echo "Environment=\"NO_PROXY=http://$NO_PROXY" > /etc/systemd/system/docker.service.d/http-proxy.conf
+   echo "Environment=\"HTTP_PROXY=http://$ADRESSE_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
+   echo "Environment=\"HTTPS_PROXY=http://$ADRESSE_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
+   echo "Environment=\"NO_PROXY=http://$NO_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
    echo ""
    echo -e "Redémarrage de Docker"
    systemctl daemon-reload
@@ -142,6 +155,11 @@ if [ "$ADRESSE_PROXY" != "" ]; then
 	echo -e "$COLINFO"
 	echo "Aucun proxy configuré sur le système"
 	echo -e "$COLCMD"
+        if [ -f "/etc/systemd/system/docker.service.d/http-proxy.conf" ]; then
+           rm -f /etc/systemd/system/docker.service.d/http-proxy.conf
+	   systemctl daemon-reload
+           systemctl restart docker
+         fi
 fi
 
 # Lancement de Portainer
@@ -203,7 +221,7 @@ echo -e "$COLCMD\c"
 
 # Téléchargement du fichier contenant les identifiants d'accès
 
-wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
+#wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
 
 echo -e "$COLINFO"
 echo "L'application e-comBox est maintenant accessible à l'URL suivante :"

@@ -100,6 +100,7 @@ if [ "$ADRESSE_PROXY" != "" ]; then
         git config --global --unset http.proxy
 fi
 
+# Portainer
 
 #Récupération de portainer
 echo -e "$COLPARTIE"
@@ -162,12 +163,71 @@ if [ "$ADRESSE_PROXY" != "" ]; then
          fi
 fi
 
+
+if docker ps -a | grep e-combox; then
+	docker rm -f e-combox
+	docker volume rm $(docker volume ls -qf dangling=true)
+fi
+
+
+# Création du réseau pour l'application
+
+echo -e "$COLPARTIE"
+echo -e "Création du réseau pour e-comBox"
+echo -e "$COLCMD"
+
+
+echo -e "$COLINFO"
+echo "Le réseau pour e-comBox va être créé"
+echo "Les sites éventuellement existants vont être stoppés"
+
+echo ""
+echo "Le réseau d'e-comBox est défini par défaut à 192.168.97.0/24 avec une passerelle à 192.168.97.1/24"
+
+
+echo -e "$COLSAISIE\n"
+echo "Laisser vide et validez si vous acceptez ce réseau sinon saisissez un nouveau réseau sous la forme edresseIP/CIDR"
+read NET_ECB
+echo ""
+echo "Laisser vide et validez si vous acceptez l'adresse de passerelle sinon saisissez une nouvelle passerelle"
+read GW_ECB
+
+if [ "$NET_ECB" = "" ]; then
+	NET_ECB=192.168.97.0/24
+fi
+
+if [ "$GW_ECB" = "" ]; then
+	GW_ECB=192.168.97.1
+fi
+
+
+
+
+echo -e "$COLINFO"
+echo "Vous vous apprêtez à utiliser les paramètres suivants:"
+echo -e "Adresse IP du réseau : $NET_ECB"
+echo -e "Adresse IP de la passerelle :  $GW_ECB"
+echo -e "$COLCMD"
+
+POURSUIVRE
+
+echo -e "$COLCMD"
+
+if ( docker network ls | grep bridge_e-combox ); then
+   docker stop $(docker ps -q)
+   docker network rm bridge_e-combox
+   docker network create --subnet $NET_ECB --gateway=$GW_ECB bridge_e-combox
+else 
+   docker network create --subnet $NET_ECB --gateway=$GW_ECB bridge_e-combox
+   #docker network create --subnet 192.168.97.0/24 --gateway=192.168.97.1 bridge_ecombox
+fi
+
 # Lancement de Portainer
 echo -e "$COLDEFAUT"
 echo "Lancement de portainer"
 echo -e "$COLCMD\c"
 cd /opt/e-comBox/e-comBox_portainer/
-docker-compose up -d
+docker-compose up --build -d
 
 echo -e "$COLINFO"
 echo "Portainer est maintenant accessible à l'URL suivante :"
@@ -183,12 +243,8 @@ echo -e "$COLPARTIE"
 echo "Lancement et configuration de l'environnement de l'application e-comBox"
 echo -e "$COLCMD\c"
 
-if docker ps -a | grep e-combox; then
-	docker rm -f e-combox
-	docker volume rm $(docker volume ls -qf dangling=true)
-fi
 docker pull aporaf/e-combox:1.0
-docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 aporaf/e-combox:1.0
+docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 --network bridge_e-combox aporaf/e-combox:1.0
 
 # Nettoyage
 echo -e "$COLDEFAUT"
@@ -203,13 +259,6 @@ do
         sed -i -e "s/localhost:8880/$URL_UTILE:8880/g" $fichier
 done
 
-# Création du réseau des sites
-echo -e "$COLDEFAUT"
-echo "Création du réseau des sites"
-echo -e "$COLCMD\c"
-if (! docker network ls | grep bridge_e-combox); then
-docker network create bridge_e-combox
-fi
 echo -e "$COLTITRE"
 echo "***************************************************"
 echo "*        FIN DE L'INSTALLATION DE E-COMBOX        *"

@@ -15,5 +15,5 @@ curl -fsSL https://raw.githubusercontent.com/siollb/e-comBox_scriptsLinux/master
 bash install_docker_docker-compose.sh
 
 # Téléchargement et lancement du script qui installe e-comBox
-curl -fsSL https://raw.githubusercontent.com/siollb/e-comBox_scriptsLinux/master/install_application.sh -o install_application.sh
-bash install_application.sh
+curl -fsSL https://raw.githubusercontent.com/siollb/e-comBox_scriptsLinux/master/configure_application.sh -o configure_application.sh
+bash configure_application.sh

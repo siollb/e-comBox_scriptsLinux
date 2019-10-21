@@ -125,63 +125,6 @@ if [ "$ADRESSE_PROXY" != "" ]; then
         fi
 fi
 
-
-# Création du réseau pour l'application
-
-echo -e "$COLPARTIE"
-echo -e "Création ou modification du réseau pour e-comBox"
-echo -e "$COLCMD"
-
-if ( docker network ls | grep bridge_e-combox ); then
-   NET_ECB=`docker network inspect --format='{{range .IPAM.Config}}{{.Subnet}}{{end}}' bridge_e-combox`
-   echo -e "$COLINFO"
-   echo -e "Le système constate que le réseau $NET_ECB est déjà créé"
-   echo -e "Si vous désirez modifier les paramètres de ce réseau, les sites existants seront supprimés"
-   echo -e ""
-   echo -e "Voulez-vous modifier le réseau ? $COLSAISIE\c"
-   echo -e "(tapez oui pour modifier le réseau et SUPPRIMER les sites ou sur n'importe quel autre touche pour continuer)."
-   read CONFIRM_RESEAU
-   if [ "$CONFIRM_RESEAU" = "oui" ]; then
-      docker rm -f $(docker ps -aq)
-      docker volume rm $(docker volume ls -qf dangling=true)
-      docker network rm bridge_e-combox
-      echo -e "$COLSAISIE\n"
-      echo "Saisissez le nouveau réseau sous la forme edresseIP/CIDR."
-      read NET_ECB
-      echo ""
-      echo "$COLCMD"
-      docker network create --subnet $NET_ECB bridge_e-combox
-      echo -e "$COLINFO"
-      echo -e "Le nouveau réseau $NET_ECB a été créé."
-      else echo -e "Vous avez décidé de ne pas modifier le réseau."
-   fi
-   else
-	echo -e "$COLINFO"
-        echo -e ""
-        echo -e "Le réseau d'e-comBox sera défini par défaut à 192.168.97.0/24"
-        echo -e "Voulez-vous changer ce paramétrage ? $COLSAISIE\c"
-        echo -e "(tapez oui pour changer l'adresse IP du réseau créé par défaut ou sur n'importe quelle touche pour continuer sans changement)."
-        read CONFIRM_RESEAU
-        if [ $CONFIRM_RESEAU = "oui" ]; then
-           echo -e "$COLSAISIE\n"
-           echo "Saisissez l'adresse du réseau sous la forme edresseIP/CIDR."
-           read NET_ECB
-           echo -e ""
-           echo -e "$COLCMD"
-           docker network create --subnet $NET_ECB bridge_e-combox
-           echo -e "$COLINFO"
-           echo -e "Le réseau $NET_ECB a été créé."
-           else
-               NET_ECB=192.168.97.0/24
-               echo -e ""
-               echo -e "$COLCMD"
-               docker network create --subnet $NET_ECB bridge_e-combox
-               echo -e "$COLINFO"
-               echo -e "Le réseau $NET_ECB a été créé."
-       fi
- fi
-
-
 # Portainer
 
 #Récupération de portainer
@@ -261,18 +204,6 @@ echo "Lancement et configuration de l'environnement de l'application e-comBox"
 echo -e "$COLCMD\c"
 echo -e ""
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 --network bridge_e-combox aporaf/e-combox:1.0
-
-# Nettoyage des anciennes images si elles existent
-echo -e "$COLDEFAUT"
-echo "Suppression éventuelle des images si elle ne sont associées à aucun site"
-echo -e "$COLCMD\c"
-echo -e ""
-
-docker image rm -f $(docker images -q) 2>> /var/log/errorEcomBox.log
-
-if [ `docker images -qf dangling=true` ]; then
- docker rmi $(docker images -qf dangling=true) 2>> /var/log/errorEcomBox.log
-fi
 
 # Configuration de l'API 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map

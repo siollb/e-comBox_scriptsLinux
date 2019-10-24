@@ -286,14 +286,18 @@ echo "*        FIN DE L'INSTALLATION DE E-COMBOX        *"
 echo "***************************************************"
 
 echo -e "$COLDEFAUT"
-echo "Téléchargement du fichier contenant les identifiants d'accès"
+echo "Téléchargement du fichier contenant les identifiants d'accès et des scripts permettant de reconfigurer l'application si nécessaire"
 echo -e "$COLCMD\c"
 
 # Téléchargement du fichier contenant les identifiants d'accès
 if [ "$ADRESSE_PROXY" != "" ]; then
    wget --proxy $ADRESSE_PROXY https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
-   else
-	wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
+   wget --proxy $ADRESSE_PROXY https://github.com/siollb/e-comBox_scriptsLinux/raw/master/change_config_ip.sh -O /opt/e-comBox/change_config_ip.sh
+   wget --proxy $ADRESSE_PROXY https://github.com/siollb/e-comBox_scriptsLinux/raw/master/configure_application.sh -O /opt/e-comBox/configure_application.sh
+    else
+       wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
+       wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/change_config_ip.sh -O /opt/e-comBox/change_config_ip.sh
+       wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/configure_application.sh -O /opt/e-comBox/configure_application.sh
 fi
 
 echo -e "$COLINFO"

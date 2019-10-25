@@ -169,7 +169,7 @@ echo -e "$COLDEFAUT"
 echo "Lancement de portainer"
 echo -e "$COLCMD\c"
 cd /opt/e-comBox/e-comBox_portainer/
-docker-compose up -d
+docker-compose up --build -d
 
 echo -e "$COLINFO"
 echo "Portainer est maintenant accessible à l'URL suivante :"

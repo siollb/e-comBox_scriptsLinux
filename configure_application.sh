@@ -162,9 +162,9 @@ if ( docker network ls | grep bridge_e-combox ); then
         echo -e "Voulez-vous changer ce paramétrage ? $COLSAISIE\c"
         echo -e "(tapez oui pour changer l'adresse IP du réseau créé par défaut ou sur n'importe quelle touche pour continuer sans changement)."
         read CONFIRM_RESEAU
-        if [ $CONFIRM_RESEAU = "oui" ]; then
+        if [ "$CONFIRM_RESEAU" = "oui" ]; then
            echo -e "$COLSAISIE\n"
-           echo "Saisissez l'adresse du réseau sous la forme edresseIP/CIDR."
+           echo "Saisissez l'adresse du réseau sous la forme adresseIP/CIDR."
            read NET_ECB
            echo -e ""
            echo -e "$COLCMD"
@@ -226,7 +226,7 @@ echo -e "$COLDEFAUT"
 echo "Lancement de portainer"
 echo -e "$COLCMD\c"
 cd /opt/e-comBox/e-comBox_portainer/
-docker-compose up -d
+docker-compose up --build -d
 
 echo -e "$COLINFO"
 echo "Portainer est maintenant accessible à l'URL suivante :"

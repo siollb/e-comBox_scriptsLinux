@@ -51,10 +51,10 @@ echo "*                DE SON ENVIRONNEMENT             *"
 echo "***************************************************"
 
 echo -e "$COLINFO"
-echo -e "Création d'un fichier de log : /var/log/ecombox.log"
+echo -e "Création des fichiers de log : /var/log/ecombox.log et /var/log/errorEcomBox.log"
 echo -e "$COLCMD"
 touch /var/log/ecombox.log
-
+touch /var/log/errorEcomBox.log
 
 echo -e "$COLPARTIE"
 echo -e "Configuration de l'adresse IP"
@@ -98,7 +98,7 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    echo -e "$COLDEFAUT"
    echo -e "Congiguration de GIT pour le proxy"
    echo -e "$COLCMD\c"
-   git config --global http.proxy http://$ADRESSE_PROXY
+   git config --global http.proxy $ADRESSE_PROXY
    if [ ! -d "/etc/systemd/system/docker.service.d" ]; then
           mkdir /etc/systemd/system/docker.service.d
    fi

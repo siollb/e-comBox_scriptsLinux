@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Installation de Portainer
+
 # Les fichiers incluant le docker-compose seront téléchargés dans /opt/e-comBox
 
 # Couleurs
@@ -13,6 +13,14 @@ COLSAISIE="\033[1;32m"  # Vert
 COLCMD="\033[1;37m"     # Blanc
 COLERREUR="\033[1;31m"  # Rouge
 COLINFO="\033[0;36m"    # Cyan
+
+
+echo -e ""
+echo -e "$COLINFO"
+echo -e "Le script va maintenant procéder à l'installation de e-comBox"
+echo -e ""
+echo -e "$COLCMD"
+
 
 
 ERREUR()

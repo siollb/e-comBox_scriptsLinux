@@ -36,6 +36,14 @@ apt-get install -y apt-transport-https ca-certificates gnupg2 software-propertie
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 
+echo -e ""
+echo -e "$COLINFO"
+echo -e "Docker est installé"
+echo -e ""
+
+echo -e "$COLCMD"
+
+
 # Installation de Docker Compose
 echo -e ""
 echo -e "$COLPARTIE"
@@ -58,8 +66,7 @@ chmod +x /usr/bin/docker-compose
 
 echo -e ""
 echo -e "$COLINFO"
-echo -e "Docker et Docker-Compose sont installés"
-echo -e "Le script va maintenant procéder à l'installation de e-comBox"
+echo -e "Docker-Compose est installé"
 echo -e ""
 
 echo -e "$COLCMD"

@@ -113,16 +113,32 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    echo -e "Redémarrage de Docker"
    systemctl daemon-reload
    systemctl restart docker
+   echo -e "$COLDEFAUT"
+   echo "Ajout des paramètres du Proxy dans ~/.docker/config.json après sauvegarde du fichier d'origine et du fichier actuel"
+   echo -e "$COLCMD\c"
+   # Sauvegarde du fichier config.json d'origine si ce n'est déjà fait
+   if [ ! -e ~/.docker/config.json.ori ]; then
+       cp ~/.docker/config.json ~/.docker/config.json.ori
+   fi
+   # Sauvegarde du fichier actuel
+   cp ~/.docker/config.json ~/.docker/config.json.sauv
+   # Ajout des paramètres du proxy au fichier config.json
+   sed -i.bak "1a \ \t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t}," ~/.docker/config.json
    else
         echo -e "$COLINFO"
-        echo "Aucun proxy configuré sur le système"
+        echo "Aucun proxy configuré sur le système."
+        echo "Les paramètres du proxy, s'ils existent, sont supprimés"
         echo -e "$COLCMD"
         git config --global --unset http.proxy
-	if [ -f "/etc/systemd/system/docker.service.d/http-proxy.conf" ]; then
+        if [ -f "/etc/systemd/system/docker.service.d/http-proxy.conf" ]; then
            rm -f /etc/systemd/system/docker.service.d/http-proxy.conf
            systemctl daemon-reload
            systemctl restart docker
         fi
+        # Sauvegarde du fichier actuel
+        cp ~/.docker/config.json ~/.docker/config.json.sauv
+        # Suppression des paramètres du proxy du fichier config.json
+        sed -i.bak "/\"proxies\": {/,9d" ~/.docker/config.json
 fi
 
 # Portainer
@@ -222,7 +238,8 @@ echo -e "$COLCMD\c"
 
 # Téléchargement du fichier contenant les identifiants d'accès
 if [ "$ADRESSE_PROXY" != "" ]; then
-   wget --proxy $ADRESSE_PROXY https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
+	wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
+   #wget --proxy $ADRESSE_PROXY https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
    else
 	wget https://github.com/siollb/e-comBox_scriptsLinux/raw/master/e-comBox_identifiants_acces_applications.pdf -O /opt/e-comBox/e-comBox_identifiants_acces_applications.pdf
 fi

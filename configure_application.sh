@@ -92,6 +92,19 @@ echo -e "$COLCMD"
 
 POURSUIVRE
 
+
+# Création du fichier config.json s'il n'existe pas
+if [ ! -e "~/.docker" ]; then
+       mkdir ~/.docker
+       echo -e "$COLDEFAUT"
+       echo -e "Création d'un fichier vide config.json"
+       echo -e "$COLCMD\c"
+       echo "" > ~/.docker/config.json
+       chown -R $USER:docker ~/.docker
+       chmod g+rw ~/.docker/config.json
+fi
+
+
 #Configuration du proxy pour GIT et pour Docker
 
 if [ "$ADRESSE_PROXY" != "" ]; then
@@ -123,8 +136,12 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    # Sauvegarde du fichier actuel
    cp ~/.docker/config.json ~/.docker/config.json.sauv
    # Ajout des paramètres du proxy au fichier config.json
-   sed -i.bak "1a \ \t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t}," ~/.docker/config.json
+   if [ ! -s "~/.docker/config.json" ]; then
+   sed -i "1i \ {\n\t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t}\n\t}" ~/.docker/config.json
    else
+    sed -i.bak "1a \ \t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t},\n" ~/.docker/config.json
+    fi
+      else
         echo -e "$COLINFO"
         echo "Aucun proxy configuré sur le système."
 	echo "Les paramètres du proxy, s'ils existent, sont supprimés"
@@ -138,7 +155,10 @@ if [ "$ADRESSE_PROXY" != "" ]; then
 	# Sauvegarde du fichier actuel
         cp ~/.docker/config.json ~/.docker/config.json.sauv
 	# Suppression des paramètres du proxy du fichier config.json
-        sed -i.bak "/\"proxies\": {/,9d" ~/.docker/config.json
+        sed -i.bak "/\"proxies\": {/,10d" ~/.docker/config.json
+	if [ `sed -n '$=' /root/.docker/config.json` = 1 ]
+		echo "" > ~/.docker/config.json
+	fi
 fi
 
 

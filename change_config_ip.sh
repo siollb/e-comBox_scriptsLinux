@@ -93,9 +93,12 @@ echo -e "$COLCMD"
 POURSUIVRE
 
 # Création du fichier config.json s'il n'existe pas
-if [ ! -e "~/.docker" ]; then
+if [ ! -e ~/.docker ]; then
        mkdir ~/.docker
        echo -e "$COLDEFAUT"
+fi
+
+if [ ! -e ~/.docker/config.json ]; then
        echo -e "Création d'un fichier vide config.json"
        echo -e "$COLCMD\c"
        echo "" > ~/.docker/config.json
@@ -135,8 +138,8 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    # Sauvegarde du fichier actuel
    cp ~/.docker/config.json ~/.docker/config.json.sauv
    # Ajout des paramètres du proxy au fichier config.json
- if [ ! -s "~/.docker/config.json" ]; then
-   sed -i "1i \ {\n\t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t}\n\t}" ~/.docker/config.json
+ if [ ! -s ~/.docker/config.json ]; then
+   sed -i "1i \ {\n\t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n  }\n\t}\n\t}" ~/.docker/config.json
    else
     sed -i.bak "1a \ \t\"proxies\": {\n\t  \"default\":\n\t  {\n\t\t\"httpProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"httpsProxy\": \"http:\/\/$ADRESSE_PROXY\",\n\t\t\"noProxy\": \"$NO_PROXY\"\n\t  }\n\t},\n" ~/.docker/config.json
     fi
@@ -155,8 +158,9 @@ if [ "$ADRESSE_PROXY" != "" ]; then
         cp ~/.docker/config.json ~/.docker/config.json.sauv
         # Suppression des paramètres du proxy du fichier config.json
         sed -i.bak "/\"proxies\": {/,10d" ~/.docker/config.json
-	if [ `sed -n '$=' /root/.docker/config.json` = 1 ]
-                echo "" > ~/.docker/config.json
+	if [ `sed -n '$=' /root/.docker/config.json` = 1 ]; then
+                echo "Le fichier config.json est supprimé"
+		rm -rf ~/.docker/config.json
         fi
 fi
 

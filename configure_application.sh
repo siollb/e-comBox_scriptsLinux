@@ -130,7 +130,7 @@ if [ "$ADRESSE_PROXY" != "" ]; then
    echo "[Service]" > /etc/systemd/system/docker.service.d/http-proxy.conf
    echo "Environment=\"HTTP_PROXY=http://$ADRESSE_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
    echo "Environment=\"HTTPS_PROXY=http://$ADRESSE_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
-   echo "Environment=\"NO_PROXY=http://$NO_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
+   echo "Environment=\"NO_PROXY=$NO_PROXY\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
    echo ""
    echo -e "Redémarrage de Docker"
    systemctl daemon-reload

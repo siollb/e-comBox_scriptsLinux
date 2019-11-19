@@ -295,6 +295,7 @@ echo -e "$COLCMD"
 if docker ps -a | grep e-combox; then
 	docker rm -f e-combox
 	docker volume rm $(docker volume ls -qf dangling=true)
+	#docker image rm -f aporaf/e-combox:1.0
 fi
 
 
@@ -318,12 +319,22 @@ echo -e "$COLDEFAUT"
 echo "Suppression éventuelle des images si elle ne sont associées à aucun site"
 echo -e "$COLCMD\c"
 echo -e ""
-
 docker image rm -f $(docker images -q) 2>> /var/log/errorEcomBox.log
 
 if [ `docker images -qf dangling=true` ]; then
  docker rmi $(docker images -qf dangling=true) 2>> /var/log/errorEcomBox.log
 fi
+
+# Arrêt des containers qui doivent être redémarrés après reconfiguration de l'environnement
+echo -e "$COLDEFAUT"
+echo "Arrêt des containers Prestashop, WooCommerce et Blog"
+
+LIST_CONTAINERS=`docker ps -q -f name=prestashop && docker ps -q -f name=woocommerce && docker ps -q -f name=blog`
+
+if [ -n "$LIST_CONTAINERS" ]; then
+	docker stop $LIST_CONTAINERS
+fi
+
 
 # Configuration de l'API 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map

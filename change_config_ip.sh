@@ -231,6 +231,7 @@ echo -e "$COLCMD"
 if docker ps -a | grep e-combox; then
 	docker rm -f e-combox
 	docker volume rm $(docker volume ls -qf dangling=true)
+	docker image rm -f aporaf/e-combox:1.0
 fi
 
 
@@ -248,6 +249,17 @@ echo "Lancement et configuration de l'environnement de l'application e-comBox"
 echo -e "$COLCMD\c"
 echo -e ""
 docker run -dit --name e-combox -v ecombox_data:/usr/local/apache2/htdocs/ --restart always -p 8888:80 --network bridge_e-combox aporaf/e-combox:1.0
+
+# Arrêt des containers qui doivent être redémarrés après reconfiguration de l'environnement
+echo -e "$COLDEFAUT"
+echo "Arrêt des containers Prestashop, WooCommerce et Blog"
+
+LIST_CONTAINERS=`docker ps -q -f name=prestashop && docker ps -q -f name=woocommerce && docker ps -q -f name=blog`
+
+if [ -n "$LIST_CONTAINERS" ]; then
+        docker stop $LIST_CONTAINERS
+fi
+
 
 # Configuration de l'API 
 for fichier in /var/lib/docker/volumes/ecombox_data/_data/*.js /var/lib/docker/volumes/ecombox_data/_data/*.js.map
